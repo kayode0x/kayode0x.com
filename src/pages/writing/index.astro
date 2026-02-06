@@ -1,0 +1,61 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SEO from '../../components/SEO.astro';
+import Pagination from '../../components/Pagination.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import PageStats from '../../components/PageStats.astro';
+import { getCollection } from 'astro:content';
+import { pagesConfig } from '../../pages.config';
+
+const postsPerPage = 5;
+
+const allArticles = await getCollection('writing', ({ data }) => {
+	return data.draft === false;
+});
+
+const sortedArticles = allArticles.sort((a, b) => {
+	return b.data.publishDate.getTime() - a.data.publishDate.getTime();
+});
+
+const articles = sortedArticles.slice(0, postsPerPage);
+const currentPage = 1;
+const totalArticles = sortedArticles.length;
+const totalPages = Math.ceil(totalArticles / postsPerPage);
+const pageTitle = currentPage === 1 ? pagesConfig.writing.title : `${pagesConfig.writing.title} - Page ${currentPage}`;
+---
+
+<BaseLayout>
+	<SEO slot="head" title={pageTitle} description={pagesConfig.writing.description} type="website" />
+
+	<main class="page-container">
+		<header class="page-header">
+			<h1 class="page-title">{pagesConfig.writing.heading}</h1>
+			<p class="page-intro">
+				{pagesConfig.writing.intro}
+			</p>
+			<PageStats
+				text={totalPages > 1
+					? `Showing ${(currentPage - 1) * postsPerPage + 1}-${Math.min(currentPage * postsPerPage, totalArticles)} of ${totalArticles} articles`
+					: `${totalArticles} article` + (totalArticles === 1 ? '' : 's')}
+			/>
+		</header>
+
+		{
+			articles.length > 0 ? (
+				<div class="card-list">
+					{articles.map((article) => (
+						<ArticleCard
+							title={article.data.title}
+							slug={article.id}
+							description={article.data.description}
+							publishDate={article.data.publishDate}
+							tags={article.data.tags}
+						/>
+					))}
+				</div>
+			) : null
+		}
+
+		<Pagination currentPage={currentPage} totalPages={totalPages} baseUrl="/writing" />
+	</main>
+</BaseLayout>

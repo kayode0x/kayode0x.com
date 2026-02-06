@@ -1,0 +1,60 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SEO from '../components/SEO.astro';
+import TimelineEntry from '../components/TimelineEntry.astro';
+import { getCollection, render } from 'astro:content';
+import { pagesConfig } from '../pages.config';
+import PageStats from '../components/PageStats.astro';
+
+const allNotesEntries = await getCollection('notes');
+
+const sortedNotesEntries = allNotesEntries.sort((a, b) => {
+	return b.data.date.getTime() - a.data.date.getTime();
+});
+
+const entriesWithContent = await Promise.all(
+	sortedNotesEntries.map(async (entry) => {
+		const { Content } = await render(entry);
+		// Check if entry has body content (not just frontmatter)
+		const hasContent = Boolean(entry.body && entry.body.trim().length > 0);
+		return { entry, Content, hasContent };
+	})
+);
+---
+
+<BaseLayout>
+	<SEO slot="head" title={pagesConfig.notes.title} description={pagesConfig.notes.description} type="website" />
+
+	<main class="page-container">
+		<header class="page-header">
+			<h1 class="page-title">{pagesConfig.notes.heading}</h1>
+			<p class="page-intro">
+				{pagesConfig.notes.intro}
+			</p>
+			<PageStats text={`${entriesWithContent.length} notes documented`} />
+		</header>
+
+		{
+			entriesWithContent.length > 0 ? (
+				<div class="notes-timeline">
+					{entriesWithContent.map(({ entry, Content, hasContent }) => (
+						<TimelineEntry
+							date={entry.data.date}
+							title={entry.data.title}
+							description={entry.data.description}
+							hasContent={hasContent}
+						>
+							{hasContent && <Content />}
+						</TimelineEntry>
+					))}
+				</div>
+			) : null
+		}
+	</main>
+
+	<style>
+		.notes-timeline {
+			margin-top: 2rem;
+		}
+	</style>
+</BaseLayout>

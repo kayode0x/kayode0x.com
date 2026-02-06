@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SEO from '../../components/SEO.astro';
+import DecisionCard from '../../components/DecisionCard.astro';
+import PageStats from '../../components/PageStats.astro';
+import { getCollection } from 'astro:content';
+import { pagesConfig } from '../../pages.config';
+
+const allRants = await getCollection('rants');
+
+const sortedRants = allRants.sort((a, b) => {
+  return b.data.date.getTime() - a.data.date.getTime();
+});
+
+const totalRants = sortedRants.length;
+---
+
+<BaseLayout>
+  <SEO 
+    slot="head"
+    title={pagesConfig.rants.title}
+    description={pagesConfig.rants.description}
+    type="website"
+  />
+
+  <main class="page-container">
+    <header class="page-header">
+      <h1 class="page-title">{pagesConfig.rants.heading}</h1>
+      <p class="page-intro">
+        {pagesConfig.rants.intro}
+      </p>
+      <PageStats text={`${totalRants} rants documented`} />
+    </header>
+
+    {sortedRants.length > 0 ? (
+      <div class="card-list card-list--compact">
+        {sortedRants.map((rant) => (
+          <DecisionCard
+            title={rant.data.title}
+            slug={rant.id}
+            context={rant.data.context}
+            date={rant.data.date}
+            tags={rant.data.tags}
+          />
+        ))}
+      </div>
+    ) : null}
+  </main>
+</BaseLayout>
