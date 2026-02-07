@@ -1,7 +1,7 @@
 ---
 title: "One Scan, Instant Login: Building QR Authentication From Scratch"
 description: "A deep dive into the architecture, design decisions, and implementation of QR code authentication, inspired by major platforms."
-publishDate: 2026-02-04
+publishDate: 2026-02-06
 tags:
   - "qr-code"
   - "authentication"
@@ -599,4 +599,4 @@ The implementation details: WebSockets vs polling, Redis TTLs, first-scanner-win
 
 Both polling and WebSocket approaches work. TikTok proves polling is viable at massive scale. I chose WebSockets because instant feedback feels better and we already had the infrastructure. If you're starting from scratch without a WebSocket server, polling might be the simpler choice.
 
-The full implementation is live in [Linkvite](https://linkvite.io). Scan a code, you're in.
+The full implementation is live in [Linkvite](https://app.linkvite.io). Scan a code, you're in.
