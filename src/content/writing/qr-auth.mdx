@@ -493,7 +493,11 @@ A malicious QR code pointing to `https://evil.com/qr-auth/...` gets rejected bef
 
 ### 7. WebSocket Channel Isolation
 
-Each session has its own channel (`#sessionID`). Users can only subscribe to channels their JWT authorizes. Centrifugo handles this validation.
+Centrifugo's `#` prefix creates a user channel boundary. For a channel like `#qr_abc123`, only a client whose JWT `sub` claim matches `qr_abc123` can subscribe. Centrifugo extracts this claim automatically and enforces access. Each QR session uses this to ensure only the intended client can receive events.
+
+### 8. Shared JWT Verification
+
+Both the Go backend and Centrifugo verify tokens using the same HS256 secret. When creating a QR session, the backend signs a JWT with a shared secret. Centrifugo is configured with this same secret, allowing it to independently verify tokens without calling the backend. This keeps authentication stateless while ensuring only valid tokens can subscribe to session channels.
 
 ---
 
