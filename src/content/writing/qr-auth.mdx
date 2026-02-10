@@ -309,7 +309,7 @@ func (h *handler) startQRAuthSession(c *fiber.Ctx) error {
 
     return res.Success(response.Data{
         Data: schema.StartQRAuthSessionResponse{
-            Endpoint: endpoint,  // -> "https://app.linkvite.io/qr-auth/qr_abc123"
+            Endpoint: endpoint,  // -> "https://linkvite.io/qr-auth/qr_abc123"
             Token:    string(token),
         },
     })
@@ -317,7 +317,7 @@ func (h *handler) startQRAuthSession(c *fiber.Ctx) error {
 ```
 
 The desktop receives two things:
-1. **`endpoint`**: The URL encoded in the QR code (e.g., `https://app.linkvite.io/qr-auth/qr_abc123`)
+1. **`endpoint`**: The URL encoded in the QR code (e.g., `https://linkvite.io/qr-auth/qr_abc123`)
 2. **`token`**: A JWT for authenticating the WebSocket connection
 
 The desktop then renders the QR code and connects to Centrifugo:
