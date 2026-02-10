@@ -69,10 +69,6 @@ const recentWriting = allWriting
 						it's me learning in public.
 					</p>
 
-					<p class="hero-meta">
-						{siteConfig.author.name} · {siteConfig.author.title}
-					</p>
-
 					<div class="hero-cta">
 						<a href="/projects" class="btn-primary">View Projects</a>
 						<a href="/writing" class="btn-secondary">Writing</a>
@@ -83,13 +79,27 @@ const recentWriting = allWriting
 				<div class="hero-right">
 					<div class="case-snapshots">
 						{
-							caseSnapshots.map((project) => (
-								<a href={`/projects/${project.id}`} class="case-snapshot">
-									<span class="case-label">Case · {project.data.role}</span>
-									<span class="case-title">{project.data.title}</span>
-									<span class="case-outcome">{project.data.outcomeSummary}</span>
-								</a>
-							))
+							caseSnapshots.length > 0 ? (
+								caseSnapshots.map((project) => (
+									<a href={`/projects/${project.id}`} class="case-snapshot">
+										<span class="case-label">Case · {project.data.role}</span>
+										<span class="case-title">{project.data.title}</span>
+										<span class="case-outcome">{project.data.outcomeSummary}</span>
+									</a>
+								))
+							) : (
+								<div
+									style={{
+										padding: '1.5rem',
+										background: 'var(--color-bg-secondary)',
+										borderRadius: '8px',
+									}}
+								>
+									<p class="no-writing">
+										No featured projects to display. Be sure to check back later!
+									</p>
+								</div>
+							)
 						}
 					</div>
 				</div>
@@ -191,13 +201,6 @@ const recentWriting = allWriting
 			line-height: 1.6;
 		}
 
-		.hero-meta {
-			font-size: 0.875rem;
-			color: var(--color-text-muted);
-			margin-bottom: 2rem;
-			letter-spacing: 0.01em;
-		}
-
 		.hero-cta {
 			display: flex;
 			gap: 1rem;
@@ -237,7 +240,10 @@ const recentWriting = allWriting
 		}
 
 		.hero-right {
-			padding-top: 0.5rem;
+            display: flex;
+            height: 100%;
+            align-items: center;
+            justify-content: center;
 		}
 
 		.case-snapshots {
