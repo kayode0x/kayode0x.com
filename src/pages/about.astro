@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SEO from '../components/SEO.astro';
+import { pagesConfig } from '../pages.config';
+---
+
+<BaseLayout>
+	<SEO slot="head" title={pagesConfig.about.title} description={pagesConfig.about.description} type="website" />
+
+	<main class="page-container">
+		<header class="page-header">
+			<h1 class="page-title">{pagesConfig.about.heading}</h1>
+			<p class="page-intro">
+				{pagesConfig.about.intro}
+			</p>
+
+			<p class="page-intro">
+				I'm a Software Engineer on Atlassian's Cloud Security team, working on Tier-0 auth services and sidecars
+				used across the company.
+			</p>
+
+			<p class="page-intro">
+				This is my corner of the internet. A place to document projects, share what I'm learning, and write
+				about things that interest me. It's built with Astro.
+			</p>
+			<p class="page-intro">
+				This website is still new and everything here is a work in progress. I'll update it when I have
+				something worth sharing.
+			</p>
+		</header>
+	</main>
+</BaseLayout>

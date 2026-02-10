@@ -142,28 +142,10 @@ const notesCollection = defineCollection({
   }),
 });
 
-const usesCollection = defineCollection({
-  loader: glob({ pattern: '**/*.mdx', base: './src/content/uses' }),
-  schema: z.object({
-    /** Category for grouping */
-    category: z.enum(['tools', 'stack', 'environment']),
-    
-    /** List of items in this category */
-    items: z.array(z.object({
-      name: z.string(),
-      description: z.string(),
-      url: z.string().url().optional(),
-    })),
-    
-    /** Sort order within category */
-    order: z.number(),
-  }),
-});
 
 export const collections = {
   projects: projectsCollection,
   notes: notesCollection,
   writing: writingCollection,
-  uses: usesCollection,
   rants: rantsCollection,
 };

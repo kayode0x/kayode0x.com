@@ -100,16 +100,6 @@ export const pagesConfig = {
     },
 
     /**
-     * Uses/tools page (/uses)
-     */
-    uses: {
-        title: 'Uses',
-        description: 'The tools, tech, and setup I use, both for development and hands-on projects.',
-        heading: 'Uses',
-        intro: 'A rundown of the tools, software, hardware, and environment I use day to day, from coding to car work. I keep this updated as my workflow changes.',
-    },
-
-    /**
      * Contact page (/contact)
      */
     contact: {
@@ -117,6 +107,13 @@ export const pagesConfig = {
         description: 'Reach out if you want to collaborate, talk tech, or build something together.',
         heading: 'Let\'s Talk',
     },
+
+    about: {
+        title: 'About',
+        description: 'Learn more about me, my background, and what I\'m all about.',
+        heading: 'About Me',
+        intro: 'I like building stuff I actually want, from backend systems to mobile apps, and car projects. Big on shipping ideas, tweaking cars, and watching / playing football (soccer). I build the things I wish existed — simple, fun, useful.',
+    }
 } as const;
 
 /**

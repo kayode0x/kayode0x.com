@@ -68,7 +68,7 @@ export const siteConfig = {
     bio: getEnv('SITE_AUTHOR_BIO', 'Software Engineer specializing in building scalable backend systems and mobile applications. I build what I wish existed, including car projects + lessons learned along the way.'),
     
     /** Contact email address */
-    email: getEnv('SITE_AUTHOR_EMAIL', 'yo@kayode0x.com'),
+    email: getEnv('SITE_AUTHOR_EMAIL', '[redacted]@kayode0x.com'),
     
     /** Location (optional, empty string to hide) */
     location: getEnv('SITE_AUTHOR_LOCATION', ''),
@@ -105,7 +105,7 @@ export const siteConfig = {
     { label: 'Writing', href: '/writing' },
     { label: 'Rants', href: '/rants' },
     { label: 'Notes', href: '/notes' },
-    { label: 'Uses', href: '/uses' },
+    { label: 'About', href: '/about' },
     { label: 'Contact', href: '/contact' },
   ],
 } as const;

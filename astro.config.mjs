@@ -34,7 +34,7 @@ export default defineConfig({
             SITE_AUTHOR_NAME: envField.string({ context: 'client', access: 'public', default: 'Kayode O.' }),
             SITE_AUTHOR_TITLE: envField.string({ context: 'client', access: 'public', default: 'Software Engineer' }),
             SITE_AUTHOR_BIO: envField.string({ context: 'client', access: 'public', default: 'Software Engineer specializing in building scalable backend systems and mobile applications. I build what I wish existed, including car projects + lessons learned along the way.' }),
-            SITE_AUTHOR_EMAIL: envField.string({ context: 'client', access: 'public', default: 'yo@kayode0x.com' }),
+            SITE_AUTHOR_EMAIL: envField.string({ context: 'client', access: 'public', default: '[redacted]@kayode0x.com' }),
             SITE_AUTHOR_LOCATION: envField.string({ context: 'client', access: 'public', default: '' }),
 
             // Social media links (empty string = hidden)
