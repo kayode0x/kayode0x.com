@@ -260,6 +260,82 @@ type QRAuth struct {
 
 **Why `UserID` starts empty**: The session is created by the desktop (unauthenticated). The `UserID` is only set when an authenticated mobile user joins. This separation lets us detect if a session has already been claimed.
 
+### Creating the Session
+
+When the desktop loads the login page, it requests a new QR session:
+
+```go
+func (h *handler) startQRAuthSession(c *fiber.Ctx) error {
+    res := response.New(c)
+
+    // Generate prefixed ID: "qr_abc123..."
+    qID, err := prefixid.New(prefixid.QRAuthPrefix)
+    if err != nil {
+        return res.Error(response.Data{
+            Stack:  err,
+            Status: fiber.StatusInternalServerError,
+        })
+    }
+
+    q := new(models.QRAuth).New(qID)
+
+    // Create JWT for Centrifugo subscription
+    // Subject = session ID, so client can only subscribe to their channel
+    pl := jwt.Payload{
+        Subject:        q.ID,
+        Issuer:         "linkvite",
+        JWTID:          uuid.NewString(),
+        Audience:       jwt.Audience{"linkvite"},
+        IssuedAt:       jwt.NumericDate(time.Now().UTC()),
+        ExpirationTime: jwt.NumericDate(time.Now().UTC().Add(5 * time.Minute)),
+    }
+
+    key := jwt.NewHS256([]byte(config.Vars.JWTSecret))
+    token, err := jwt.Sign(pl, key)
+    if err != nil {
+        return res.Error(response.Data{
+            Stack:  err,
+            Status: fiber.StatusInternalServerError,
+        })
+    }
+
+    q.Token = string(token)
+    if err := h.services.QRAuth.Create(q); err != nil {
+        return res.Error(response.Data{Stack: err})
+    }
+
+    // Build the URL that becomes the QR code
+    endpoint := fmt.Sprintf("%s/qr-auth/%s", config.Vars.WebURL, q.ID)
+
+    return res.Success(response.Data{
+        Data: schema.StartQRAuthSessionResponse{
+            Endpoint: endpoint,  // -> "https://app.linkvite.io/qr-auth/qr_abc123"
+            Token:    string(token),
+        },
+    })
+}
+```
+
+The desktop receives two things:
+1. **`endpoint`**: The URL encoded in the QR code (e.g., `https://app.linkvite.io/qr-auth/qr_abc123`)
+2. **`token`**: A JWT for authenticating the WebSocket connection
+
+The desktop then renders the QR code and connects to Centrifugo:
+
+```tsx
+const data = await fetch(`${API_ENDPOINT}/qr-auth/new`, { method: "POST" });
+const { endpoint, token } = data.data;
+
+// Render endpoint as QR code
+setQR((prev) => ({ ...prev, code: endpoint }));
+
+// Connect to Centrifugo with the JWT
+ws.current = new Centrifuge(centrifugoTransports, { token });
+ws.current.on("publication", processEvent).connect();
+```
+
+The JWT's `sub` claim (set to the session ID) tells Centrifugo which channel this client can subscribe to. When mobile scans and joins, events published to `#qr_abc123` reach only this desktop.
+
 ### Desktop: Handling Real-Time Events
 
 The React component handles the WebSocket lifecycle and state transitions:
@@ -418,7 +494,7 @@ Sessions have multiple expiration mechanisms:
 
 ```go
 // JWT expires in 5 minutes
-ExpirationTime: ogJWT.NumericDate(time.Now().UTC().Add(5 * time.Minute))
+ExpirationTime: jwt.NumericDate(time.Now().UTC().Add(5 * time.Minute))
 
 // Redis cache expires in 3 minutes
 const DURATION_QR_AUTH = 3 * time.Minute
